@@ -1,0 +1,610 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "可话API",
+    "description": "由于本人PC端使用需要，从可话客户端抓包得到的网络协议，不保证可靠性。侵删。",
+    "contact": {
+      "email": "javanli@qq.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://www.tideswing.fun/v1/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "global",
+      "description": "未登录用户接口"
+    },
+    {
+      "name": "geetest",
+      "description": "极验证"
+    },
+    {
+      "name": "login",
+      "description": "登录"
+    },
+    {
+      "name": "user",
+      "description": "用户"
+    }
+  ],
+  "paths": {
+    "/app-config": {
+      "summary": "获取应用全局配置",
+      "get": {
+        "summary": "获取应用全局配置",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfigResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "global"
+        ]
+      }
+    },
+    "/maker/app/version/latest": {
+      "summary": "获取APP最新版本信息",
+      "get": {
+        "summary": "获取APP最新版本信息",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "获取APP最新版本信息",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppVersionResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "global"
+        ]
+      }
+    },
+    "/geetest/register": {
+      "summary": "极验证注册",
+      "get": {
+        "summary": "极验证注册",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "client type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "captchaType",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeeTestRegisterResult"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "geetest"
+        ]
+      }
+    },
+    "/account/sms": {
+      "summary": "发送验证码",
+      "get": {
+        "summary": "发送验证码",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "challenge",
+            "in": "query",
+            "description": "challenge",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "clientType",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "mobile",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "seccode",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "validate",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "login"
+        ]
+      }
+    },
+    "/account/login": {
+      "summary": "登录",
+      "post": {
+        "summary": "登录",
+        "description": "",
+        "operationId": "",
+        "requestBody": {
+          "description": "login request body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResult"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "login"
+        ]
+      }
+    },
+    "/account/data": {
+      "summary": "当前用户数据",
+      "get": {
+        "summary": "当前用户数据",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyInfo"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConfigResponse": {
+        "type": "object",
+        "properties": {
+          "uCloudPublicStoreUrl": {
+            "type": "string"
+          },
+          "uCloudPrivateStoreUrl": {
+            "type": "string"
+          },
+          "uCloudThumbnail": {
+            "type": "string"
+          },
+          "uCloudImagePath": {
+            "type": "string"
+          },
+          "uCloudChatPath": {
+            "type": "string"
+          },
+          "uCloudAudioPath": {
+            "type": "string"
+          },
+          "publicUploadDomain": {
+            "type": "string"
+          },
+          "privateUploadDomain": {
+            "type": "string"
+          },
+          "domesticDnsUdp": {
+            "type": "string"
+          },
+          "foreignDnsUdp": {
+            "type": "string"
+          },
+          "domesticDnsDoh": {
+            "type": "string"
+          },
+          "foreignDnsDoh": {
+            "type": "string"
+          },
+          "availableBuckets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "uploadRegion": {
+                  "type": "string"
+                },
+                "uploadDomain": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "videoPath": {
+            "type": "string"
+          },
+          "videoCoverImagePath": {
+            "type": "string"
+          },
+          "trustedDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AppVersionResponse": {
+        "type": "object",
+        "properties": {
+          "uCloudPublicStoreUrl": {
+            "type": "string"
+          },
+          "uCloudPrivateStoreUrl": {
+            "type": "string"
+          },
+          "uCloudThumbnail": {
+            "type": "string"
+          },
+          "uCloudImagePath": {
+            "type": "string"
+          },
+          "uCloudChatPath": {
+            "type": "string"
+          },
+          "uCloudAudioPath": {
+            "type": "string"
+          },
+          "publicUploadDomain": {
+            "type": "string"
+          },
+          "privateUploadDomain": {
+            "type": "string"
+          },
+          "domesticDnsUdp": {
+            "type": "string"
+          },
+          "foreignDnsUdp": {
+            "type": "string"
+          },
+          "domesticDnsDoh": {
+            "type": "string"
+          },
+          "foreignDnsDoh": {
+            "type": "string"
+          },
+          "availableBuckets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "uploadRegion": {
+                  "type": "string"
+                },
+                "uploadDomain": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "videoPath": {
+            "type": "string"
+          },
+          "videoCoverImagePath": {
+            "type": "string"
+          },
+          "trustedDomains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GeeTestRegisterResult": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "gt": {
+                "type": "string"
+              },
+              "challenge": {
+                "type": "string"
+              },
+              "new_captcha": {
+                "type": "boolean"
+              }
+            }
+          },
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "mobile": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "appVersion": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "clientType": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "systemVersion": {
+            "type": "string"
+          },
+          "installTime": {
+            "type": "string"
+          }
+        }
+      },
+      "LoginResult": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "signUp": {
+            "type": "string"
+          },
+          "testGroup": {
+            "type": "string"
+          }
+        }
+      },
+      "MyInfo": {
+        "type": "object",
+        "properties": {
+          "mobile": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          },
+          "avatarName": {
+            "type": "string"
+          },
+          "backgroundImages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "province": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "nicknameUpdateTime": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "auditing": {
+            "type": "object",
+            "properties": {
+              "nickname": {
+                "type": "string"
+              },
+              "avatarName": {
+                "type": "string"
+              },
+              "backgroundImages": {
+                "type": "array",
+                "items": {}
+              }
+            }
+          },
+          "defaultBackground": {
+            "type": "string"
+          },
+          "viewableByStranger": {
+            "type": "string"
+          },
+          "testGroup": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "riskState": {
+            "type": "string"
+          },
+          "countsOfActivities": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancellationTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "registerTime": {
+            "type": "string"
+          },
+          "recommendState": {
+            "type": "string"
+          },
+          "pushState": {
+            "type": "string"
+          },
+          "ipLocation": {
+            "type": "string"
+          },
+          "mutePenalizeEndTimestamp": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "petstore_auth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+            "scopes": {
+              "write:pets": "modify pets in your account",
+              "read:pets": "read your pets"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  }
+}
