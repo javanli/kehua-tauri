@@ -24,9 +24,15 @@ export default [
   },
   {
     path: '/welcome',
+    layout: false,
     name: 'welcome',
     icon: 'smile',
     component: './Welcome',
+  },
+  {
+    path: '/home',
+    name: 'home',
+    component: './Home',
   },
   {
     path: '/admin',

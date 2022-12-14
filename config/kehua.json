@@ -29,6 +29,10 @@
     {
       "name": "user",
       "description": "用户"
+    },
+    {
+      "name": "comment",
+      "description": "评论聊天"
     }
   ],
   "paths": {

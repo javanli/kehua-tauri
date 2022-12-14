@@ -1,0 +1,160 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "可话API-v2",
+        "description": "由于本人PC端使用需要，从可话客户端抓包得到的网络协议，不保证可靠性。侵删。",
+        "contact": {
+            "email": "javanli@qq.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://www.tideswing.fun/v2/api"
+        }
+    ],
+    "tags": [
+        {
+            "name": "comment",
+            "description": "评论聊天"
+        }
+    ],
+    "paths": {
+        "/im/message/comment/timeline": {
+            "summary": "评论数据",
+            "get": {
+                "summary": "评论数据",
+                "description": "",
+                "operationId": "",
+                "parameters": [
+                    {
+                        "name": "timeStamp",
+                        "in": "query",
+                        "description": "timeStamp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "Default error sample response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentListResp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "comment"
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Comment": {
+                "type": "object",
+                "properties": {
+                    "msgType": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "content": {
+                        "type": "object",
+                        "properties": {
+                            "activitiesId": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "msgId": {
+                                "type": "string"
+                            },
+                            "commentContent": {
+                                "type": "string"
+                            },
+                            "commentUser": {
+                                "type": "string"
+                            },
+                            "fromUserId": {
+                                "type": "string"
+                            },
+                            "commentTag": {
+                                "type": "string"
+                            },
+                            "commentType": {
+                                "type": "string"
+                            },
+                            "createTime": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "messageState": {
+                                "type": "string"
+                            },
+                            "reviewState": {
+                                "type": "string"
+                            },
+                            "stickerHeight": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "stickerWidth": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "audioDuration": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "recall": {
+                                "type": "integer",
+                                "format": "int32"
+                            }
+                        }
+                    }
+                }
+            },
+            "CommentListResp": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Comment"
+                          }
+                    },
+                    "readTimes": {
+                        "type": "object",
+                        "properties": {
+                            "b5f98e29519923166a0fdbd31a2b8066": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "systemReadTime": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "friendReadTime": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

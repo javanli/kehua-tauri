@@ -77,7 +77,7 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/layout-menu
    */
   layout: {
-    locale: true,
+    locale: false,
     ...defaultSettings,
   },
   /**
@@ -87,9 +87,9 @@ export default defineConfig({
   locale: {
     // default zh-CN
     default: 'zh-CN',
-    antd: true,
+    antd: false,
     // default true, when it is true, will use `navigator.language` overwrite default
-    baseNavigator: true,
+    baseNavigator: false,
   },
   /**
    * @name antd 插件
@@ -130,10 +130,10 @@ export default defineConfig({
       requestLibPath: "import { request } from '@umijs/max'",
       // 或者使用在线的版本
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: join(__dirname, 'oneapi.json'),
+      schemaPath: join(__dirname, 'kehuaV2.json'),
       mock: false,
-      apiPrefix: "'https://petstore3.swagger.io/api/v3'",
-      projectName: 'swagger',
+      apiPrefix: "'https://www.tideswing.fun/v2/api'",
+      projectName: 'kehuaV2',
     }
   ],
   mfsu: {

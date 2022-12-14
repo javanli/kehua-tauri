@@ -10,6 +10,7 @@ import { errorConfig } from './requestErrorConfig';
 import axiosTauriApiAdapter from 'axios-tauri-api-adapter';
 import { getAppConfig, getMakerAppVersionLatest } from './services/kehua/global';
 import { getAccountData } from './services/kehua/user';
+import { getImMessageCommentTimeline } from './services/kehuaV2/comment';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -21,6 +22,7 @@ interface InitialUserState {
   currentUser?: API.MyInfo;
   appConfig?: API.ConfigResponse;
   appVersionState?: API.AppVersionResponse;
+  comments?: API.Comment[]
 }
 interface InitialState extends InitialUserState {
   settings?: Partial<LayoutSettings>;
@@ -40,14 +42,27 @@ export async function getInitialState(): Promise<InitialState> {
       });
       const appConfigPromise = getAppConfig();
       const appVersionStatePromise = getMakerAppVersionLatest();
-      
+
       const currentUser = await currentUserPromise;
       const appConfig = await appConfigPromise;
       const appVersionState = await appVersionStatePromise;
+      let comments: API.Comment[] = []
+      const now = new Date().getMilliseconds()
+      let timeStamp = now - 24 * 60 * 60 * 1000;
+      while (true) {
+        const resp = await getImMessageCommentTimeline({timeStamp})
+        if ((resp?.data?.length ?? 0) === 0) {
+          break;
+        }
+        const list = resp.data!
+        timeStamp = (list[list.length - 1].timestamp ?? now) + 1
+        comments = comments.concat(list)
+      }
       return {
         currentUser,
         appConfig,
-        appVersionState
+        appVersionState,
+        comments
       };
     } catch (error) {
       localStorage.removeItem("Authorization")
@@ -57,7 +72,7 @@ export async function getInitialState(): Promise<InitialState> {
   };
   // 当前在欢迎页
   const state = await fetchInitialState();
-  // history.push('/home');
+  history.push('/home');
   return {
     ...state,
     fetchInitialState,
@@ -71,6 +86,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     rightContentRender: () => <RightContent />,
     waterMarkProps: {
       content: initialState?.currentUser?.nickname,
+    },
+    menu: {
+      request: async () => {
+        return [{ name: "主页", path:"/" }]
+      }
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -102,11 +122,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-            <LinkOutlined />
-            <span>OpenAPI 文档</span>
-          </Link>,
-        ]
+        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+          <LinkOutlined />
+          <span>OpenAPI 文档</span>
+        </Link>,
+      ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
@@ -114,10 +134,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
+      const path = props.location?.pathname ?? "/"
+      const hideDrawer = path.includes('/login') || path.includes('/welcome') || path === "/"
+      console.log(`showDrawer:${!hideDrawer} path:${path}`)
       return (
         <>
           {children}
-          {!props.location?.pathname?.includes('/login') && (
+          {!hideDrawer && (
             <SettingDrawer
               disableUrlParams
               enableDarkTheme

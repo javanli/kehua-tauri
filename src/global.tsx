@@ -89,3 +89,7 @@ if (pwa) {
 
   clearCache();
 }
+
+localStorage.setItem("Authorization","Bearer TlD/Iw7ZkRUM6cUoGv8YlglSl5U1ICygD9xrQF5ULJVHhF4Ofd3cLKROkn0jAwwyT2uEh29fkd4TxlOh1ENZHDlFjB5fGC4+eLFELBYL76JTR4Tie15bWBVMq+XmcmaKvL5Fr2Hlg3+xNMkAsIY5p2Fo8qlTR0FM3lzSH266za5i0Y7pWrT23Q9ISPW/17Zb8TDbYEkr2BRXYxFBN8wF/NQDghU1HH30n9BfQFk6TZRnvYbIemhPPnQUB/iOpjEKIv6DAQ1Oxg6bI3Wr3rd9Gj4ZPu0cQlneAaacQPWY0bblOsdGtbBZZJBa8M0q6bHAOdk62b1oVlXxps8MexbJnA==")
+// localStorage.setItem("Authorization","")
+// console.log('global')
