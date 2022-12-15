@@ -10,7 +10,7 @@ import { errorConfig } from './requestErrorConfig';
 import axiosTauriApiAdapter from 'axios-tauri-api-adapter';
 import { getAppConfig, getMakerAppVersionLatest } from './services/kehua/global';
 import { getAccountData } from './services/kehua/user';
-import { getImMessageCommentTimeline } from './services/kehuaV2/comment';
+import { getConversations } from './services/kehuaV2/comment';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -22,7 +22,10 @@ interface InitialUserState {
   currentUser?: API.MyInfo;
   appConfig?: API.ConfigResponse;
   appVersionState?: API.AppVersionResponse;
-  comments?: API.Comment[]
+  userMap?: Map<string,API.BriefUser>;
+  commentsMap?: Map<string,API.CommentContent[]>;
+  conversations?: API.Conversation[];
+  activities?: API.Activity[];
 }
 interface InitialState extends InitialUserState {
   settings?: Partial<LayoutSettings>;
@@ -46,23 +49,18 @@ export async function getInitialState(): Promise<InitialState> {
       const currentUser = await currentUserPromise;
       const appConfig = await appConfigPromise;
       const appVersionState = await appVersionStatePromise;
-      let comments: API.Comment[] = []
-      const now = new Date().getMilliseconds()
-      let timeStamp = now - 24 * 60 * 60 * 1000;
-      while (true) {
-        const resp = await getImMessageCommentTimeline({timeStamp})
-        if ((resp?.data?.length ?? 0) === 0) {
-          break;
-        }
-        const list = resp.data!
-        timeStamp = (list[list.length - 1].timestamp ?? now) + 1
-        comments = comments.concat(list)
-      }
+      const {    conversations,activities,users,comments} = await getConversations()
+      const userArray: [string, API.BriefUser][] = users?.map((user) => [user.userId ?? "",user]) ?? []
+      const userMap = new Map<string,API.BriefUser>(userArray)
+      const commentsMap = new Map(Object.entries(comments ?? {}))
       return {
         currentUser,
         appConfig,
         appVersionState,
-        comments
+        conversations,
+        activities,
+        userMap,
+        commentsMap
       };
     } catch (error) {
       localStorage.removeItem("Authorization")
@@ -88,8 +86,33 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       content: initialState?.currentUser?.nickname,
     },
     menu: {
+      params: {
+        conversations: initialState?.conversations
+      },
       request: async () => {
-        return [{ name: "主页", path:"/" }]
+        const { commentsMap, conversations, currentUser, userMap } = initialState ?? {}
+        return [
+          {
+            name: "评论对话",
+            children: [...conversations ?? []].reverse().map((conversation: API.Conversation) => {
+              const comments = commentsMap?.get(conversation.commentTag ?? "")
+              const otherComment = comments?.find((item) => item.fromUserId !== currentUser?.userId)
+              const otherUser = userMap?.get(otherComment?.fromUserId ?? "")
+              return {
+                name: otherUser?.nickname ?? conversation.commentTag ?? "",
+                path: `/conversation/${conversation.commentTag}`
+              }
+            })
+          },
+          {
+            name: "好友聊天",  children: [
+              {
+                name: "尚未实现",
+                hideInMenu: false
+              }
+            ]
+          },
+        ]
       }
     },
     footerRender: () => <Footer />,

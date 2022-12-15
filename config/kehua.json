@@ -29,10 +29,6 @@
     {
       "name": "user",
       "description": "用户"
-    },
-    {
-      "name": "comment",
-      "description": "评论聊天"
     }
   ],
   "paths": {
@@ -251,6 +247,29 @@
     },
     "/account/data": {
       "summary": "当前用户数据",
+      "get": {
+        "summary": "当前用户数据",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyInfo"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/friends/list": {
+      "summary": "好友列表",
       "get": {
         "summary": "当前用户数据",
         "description": "",

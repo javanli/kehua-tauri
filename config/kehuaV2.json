@@ -54,10 +54,86 @@
                     "comment"
                 ]
             }
+        },
+        "/im/message/comment/conversations": {
+            "summary": "评论数据",
+            "get": {
+                "summary": "评论数据",
+                "description": "",
+                "operationId": "",
+                "responses": {
+                    "default": {
+                        "description": "Default error sample response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ConversationsResp"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "comment"
+                ]
+            }
         }
     },
     "components": {
         "schemas": {
+            "CommentContent": {
+                "type": "object",
+                "properties": {
+                    "activitiesId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "msgId": {
+                        "type": "string"
+                    },
+                    "commentContent": {
+                        "type": "string"
+                    },
+                    "commentUser": {
+                        "type": "string"
+                    },
+                    "fromUserId": {
+                        "type": "string"
+                    },
+                    "commentTag": {
+                        "type": "string"
+                    },
+                    "commentType": {
+                        "type": "string"
+                    },
+                    "createTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "messageState": {
+                        "type": "string"
+                    },
+                    "reviewState": {
+                        "type": "string"
+                    },
+                    "stickerHeight": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "stickerWidth": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "audioDuration": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "recall": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
             "Comment": {
                 "type": "object",
                 "properties": {
@@ -73,57 +149,7 @@
                         "format": "int64"
                     },
                     "content": {
-                        "type": "object",
-                        "properties": {
-                            "activitiesId": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "msgId": {
-                                "type": "string"
-                            },
-                            "commentContent": {
-                                "type": "string"
-                            },
-                            "commentUser": {
-                                "type": "string"
-                            },
-                            "fromUserId": {
-                                "type": "string"
-                            },
-                            "commentTag": {
-                                "type": "string"
-                            },
-                            "commentType": {
-                                "type": "string"
-                            },
-                            "createTime": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "messageState": {
-                                "type": "string"
-                            },
-                            "reviewState": {
-                                "type": "string"
-                            },
-                            "stickerHeight": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "stickerWidth": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "audioDuration": {
-                                "type": "integer",
-                                "format": "int32"
-                            },
-                            "recall": {
-                                "type": "integer",
-                                "format": "int32"
-                            }
-                        }
+                        "$ref": "#/components/schemas/CommentContent"
                     }
                 }
             },
@@ -150,6 +176,148 @@
                             "friendReadTime": {
                                 "type": "integer",
                                 "format": "int64"
+                            }
+                        }
+                    }
+                }
+            },
+            "BriefUser": {
+                "type": "object",
+                "properties": {
+                    "userId": {
+                        "type": "string"
+                    },
+                    "avatarName": {
+                        "type": "string"
+                    },
+                    "nickname": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Activity": {
+                "type": "object",
+                "properties": {
+                    "activitiesId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "activitiesState": {
+                        "type": "string"
+                    },
+                    "createTime": {
+                        "type": "string"
+                    },
+                    "activitiesText": {
+                        "type": "string"
+                    },
+                    "activitiesImages": {
+                        "type": "array",
+                        "items": {
+                        }
+                    },
+                    "activitiesUser": {
+                        "type": "string"
+                    },
+                    "activitiesType": {
+                        "type": "string"
+                    },
+                    "video": {
+                        "type": "object",
+                        "properties": {
+                            "cdn": {
+                                "type": "string"
+                            },
+                            "path": {
+                                "type": "string"
+                            },
+                            "token": {
+                                "type": "string"
+                            },
+                            "imagePath": {
+                                "type": "string"
+                            },
+                            "imageCdn": {
+                                "type": "string"
+                            },
+                            "duration": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "width": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "height": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "videoUserId": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "activitiesImageInfo": {
+                        "type": "array",
+                        "items": {
+                        }
+                    }
+                }
+            },
+            "Conversation": {
+                "type": "object",
+                "properties": {
+                    "commentTag": {
+                        "type": "string"
+                    },
+                    "updateTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "activitiesId": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "peerUserId": {
+                        "type": "string"
+                    },
+                    "lightNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "readTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "ConversationsResp": {
+                "type": "object",
+                "properties": {
+                    "conversations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Conversation"
+                        }
+                    },
+                    "activities": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Activity"
+                        }
+                    },
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/BriefUser"
+                        }
+                    },
+                    "comments": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/CommentContent"
                             }
                         }
                     }
