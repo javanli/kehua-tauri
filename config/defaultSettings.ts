@@ -18,7 +18,7 @@ const Settings: LayoutSettings & {
   title: '可话',
   pwa: false,
   logo: '/logo-nobg.png',
-  iconfontUrl: '',
+  iconfontUrl: ''
 };
 
 export default Settings;

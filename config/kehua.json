@@ -29,6 +29,10 @@
     {
       "name": "user",
       "description": "用户"
+    },
+    {
+      "name": "im",
+      "description": "聊天"
     }
   ],
   "paths": {
@@ -268,10 +272,10 @@
         ]
       }
     },
-    "/friends/list": {
-      "summary": "好友列表",
+    "/friends/token": {
+      "summary": "聊天token",
       "get": {
-        "summary": "当前用户数据",
+        "summary": "聊天token",
         "description": "",
         "operationId": "",
         "responses": {
@@ -280,17 +284,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MyInfo"
+                  "type": "string"
                 }
               }
             }
           }
         },
         "tags": [
-          "user"
+          "im"
         ]
       }
     }
+
   },
   "components": {
     "schemas": {

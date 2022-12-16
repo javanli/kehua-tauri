@@ -6,9 +6,11 @@ import * as global from './global';
 import * as geetest from './geetest';
 import * as login from './login';
 import * as user from './user';
+import * as im from './im';
 export default {
   global,
   geetest,
   login,
   user,
+  im,
 };
