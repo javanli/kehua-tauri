@@ -51,8 +51,8 @@ export default () => {
     [TSSocket, sendMsgCallbacks],
   );
   useEffect(() => {
-    console.log('register WS Socket');
     const initWS = async () => {
+      console.log('register WS Socket');
       const ws = await WebSocket.connect(
         'wss://im2.tideswing.fun/v1/websocket',
         {},
@@ -60,16 +60,30 @@ export default () => {
       );
       ws.addListener((msg) => {
         console.log('Received Message: ' + msg);
-        // const receiveMsg: TSSocketMsgReceiveModel = JSON.parse(evt.data) ?? {}
-        // const msgID = receiveMsg.id ?? "";
-        // const callback: TSSocketListener|undefined = sendMsgCallbacks.get(msgID)
-        // if (callback !== undefined) {
-        //     callback(receiveMsg)
-        //     sendMsgCallbacks.delete(msgID)
-        // }
-        // for (const listener of listeners.values()) {
-        //     listener(receiveMsg)
-        // }
+        switch (msg.type) {
+          case 'Close':
+            {
+              console.log('WS closed');
+              setTSSocket(undefined);
+            }
+            break;
+          case 'Text':
+            {
+              const receiveMsg: TSSocketMsgReceiveModel = JSON.parse(msg.data) ?? {};
+              const msgID = receiveMsg.id ?? '';
+              const callback: TSSocketListener | undefined = sendMsgCallbacks.get(msgID);
+              if (callback !== undefined) {
+                callback(receiveMsg);
+                sendMsgCallbacks.delete(msgID);
+              }
+              for (const listener of listeners.values()) {
+                listener(receiveMsg);
+              }
+            }
+            break;
+          default:
+            break;
+        }
       });
       setTSSocket(ws);
     };
