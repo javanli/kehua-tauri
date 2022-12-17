@@ -4,7 +4,7 @@ use serde_json::Value as JsonValue;
 use tauri::{
     api::ipc::{format_callback, CallbackFn},
     plugin::Plugin,
-    AppHandle, Invoke, Manager, Runtime, State, Window, http::header::HeaderValue,
+    AppHandle, Invoke, Manager, Runtime, State, Window, http::header::{HeaderValue, HeaderName},
 };
 use tokio::{net::TcpStream, sync::Mutex};
 use tokio_tungstenite::{
@@ -80,6 +80,7 @@ enum WebSocketMessage {
     Close(Option<CloseFrame>),
 }
 
+#[tauri::command]
 fn connect<R: Runtime>(
     window: Window<R>,
     url: String,
@@ -88,18 +89,21 @@ fn connect<R: Runtime>(
     headers: Option<HashMap<String,String>>,
 ) -> Result<Id> {
     let id = rand::random();
-    let request = url.into_client_request()?;
+    let mut request = url.into_client_request()?;
     match headers {
         Some(additionHeaders) => {
             for (key,value) in additionHeaders {
-                request.headers_mut().insert(HeaderValue::from_str(&key), HeaderValue::from_str(&value));
+                let headerKey = HeaderName::from_bytes(key.as_bytes()).unwrap();
+                let headerValue = HeaderValue::from_str(&value).unwrap();
+
+                request.headers_mut().insert(headerKey, headerValue);
             }
         },
         None => {},
     }
 
     let (ws_stream, _) =
-        tauri::async_runtime::block_on(connect_async_with_config(url, config.map(Into::into)))?;
+        tauri::async_runtime::block_on(connect_async_with_config(request, config.map(Into::into)))?;
 
     tauri::async_runtime::spawn(async move {
         let (write, read) = ws_stream.split();

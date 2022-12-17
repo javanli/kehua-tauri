@@ -1,6 +1,7 @@
 ﻿import type { RequestOptions } from '@@/plugin-request/request';
 import type { RequestConfig } from '@umijs/max';
 import { message } from 'antd';
+import { getCommonAdditionHeaders } from './utils';
 
 // 与后端约定的响应数据格式
 interface ResponseStructure {
@@ -19,12 +20,11 @@ export const errorConfig: RequestConfig = {
   errorConfig: {
     // 错误抛出
     errorThrower: (res) => {
-      const { data, error, errorMessage } =
-        res as unknown as ResponseStructure;
+      const { data, error, errorMessage } = res as unknown as ResponseStructure;
       if (error !== undefined && error !== 0) {
-        const errorInfo: any = new Error(errorMessage ?? "未知错误");
+        const errorInfo: any = new Error(errorMessage ?? '未知错误');
         errorInfo.name = 'BizError';
-        errorInfo.info = { errorCode:400, errorMessage, data };
+        errorInfo.info = { errorCode: 400, errorMessage, data };
         throw errorInfo; // 抛出自制的错误
       }
     },
@@ -42,8 +42,8 @@ export const errorConfig: RequestConfig = {
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         message.error(`Response status:${error.response.status}`);
-        console.log(error)
-        if(error.response.data?.errorMessage){
+        console.log(error);
+        if (error.response.data?.errorMessage) {
           message.error(`error message:${error.response.data.errorMessage}`);
         }
       } else if (error.request) {
@@ -62,14 +62,14 @@ export const errorConfig: RequestConfig = {
   requestInterceptors: [
     (config: RequestOptions) => {
       // 拦截请求配置，进行个性化处理。
-      const modifiedConfig = { ...config,
+      const modifiedConfig = {
+        ...config,
         headers: {
           ...config.headers,
-          "User-Agent": "ke hua/1.9.9 (iPhone; iOS 16.0; AppStore)",
-          "Authorization": localStorage.getItem("Authorization") ?? ""
-        }
+          ...getCommonAdditionHeaders(),
+        },
       };
-      return modifiedConfig
+      return modifiedConfig;
     },
   ],
 
@@ -82,7 +82,7 @@ export const errorConfig: RequestConfig = {
       if (data?.success === false) {
         message.error('请求失败！');
       }
-      response.data = data?.result ?? {}
+      response.data = data?.result ?? {};
       return response;
     },
   ],

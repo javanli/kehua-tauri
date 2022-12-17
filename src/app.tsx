@@ -21,8 +21,8 @@ interface InitialUserState {
   currentUser?: API.MyInfo;
   appConfig?: API.ConfigResponse;
   appVersionState?: API.AppVersionResponse;
-  userMap?: Map<string,API.BriefUser>;
-  commentsMap?: Map<string,API.CommentContent[]>;
+  userMap?: Map<string, API.BriefUser>;
+  commentsMap?: Map<string, API.CommentContent[]>;
   conversations?: API.Conversation[];
   activities?: API.Activity[];
 }
@@ -33,10 +33,10 @@ interface InitialState extends InitialUserState {
 }
 export async function getInitialState(): Promise<InitialState> {
   const fetchInitialState = async () => {
-    const authorization = localStorage.getItem("Authorization")
+    const authorization = localStorage.getItem('Authorization');
     if (authorization === undefined || authorization === null) {
-      history.push(loginPath)
-      return undefined
+      history.push(loginPath);
+      return undefined;
     }
     try {
       const currentUserPromise = getAccountData({
@@ -48,10 +48,11 @@ export async function getInitialState(): Promise<InitialState> {
       const currentUser = await currentUserPromise;
       const appConfig = await appConfigPromise;
       const appVersionState = await appVersionStatePromise;
-      const {    conversations,activities,users,comments} = await getConversations()
-      const userArray: [string, API.BriefUser][] = users?.map((user) => [user.userId ?? "",user]) ?? []
-      const userMap = new Map<string,API.BriefUser>(userArray)
-      const commentsMap = new Map(Object.entries(comments ?? {}))
+      const { conversations, activities, users, comments } = await getConversations();
+      const userArray: [string, API.BriefUser][] =
+        users?.map((user) => [user.userId ?? '', user]) ?? [];
+      const userMap = new Map<string, API.BriefUser>(userArray);
+      const commentsMap = new Map(Object.entries(comments ?? {}));
       return {
         currentUser,
         appConfig,
@@ -59,10 +60,10 @@ export async function getInitialState(): Promise<InitialState> {
         conversations,
         activities,
         userMap,
-        commentsMap
+        commentsMap,
       };
     } catch (error) {
-      localStorage.removeItem("Authorization")
+      localStorage.removeItem('Authorization');
       history.push(loginPath);
     }
     return undefined;
@@ -87,33 +88,36 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     menu: {
       locale: false,
       params: {
-        conversations: initialState?.conversations
+        conversations: initialState?.conversations,
       },
       request: async () => {
-        const { commentsMap, conversations, currentUser, userMap } = initialState ?? {}
+        const { commentsMap, conversations, currentUser, userMap } = initialState ?? {};
         return [
           {
-            name: "评论对话",
-            children: [...conversations ?? []].reverse().map((conversation: API.Conversation) => {
-              const comments = commentsMap?.get(conversation.commentTag ?? "")
-              const otherComment = comments?.find((item) => item.fromUserId !== currentUser?.userId)
-              const otherUser = userMap?.get(otherComment?.fromUserId ?? "")
+            name: '评论对话',
+            children: [...(conversations ?? [])].reverse().map((conversation: API.Conversation) => {
+              const comments = commentsMap?.get(conversation.commentTag ?? '');
+              const otherComment = comments?.find(
+                (item) => item.fromUserId !== currentUser?.userId,
+              );
+              const otherUser = userMap?.get(otherComment?.fromUserId ?? '');
               return {
-                name: otherUser?.nickname ?? conversation.commentTag ?? "",
-                path: `/conversation/${conversation.commentTag}`
-              }
-            })
+                name: otherUser?.nickname ?? conversation.commentTag ?? '',
+                path: `/conversation/${conversation.commentTag}`,
+              };
+            }),
           },
           {
-            name: "好友聊天",  children: [
+            name: '好友聊天',
+            children: [
               {
-                name: "尚未实现",
-                hideInMenu: false
-              }
-            ]
+                name: '尚未实现',
+                hideInMenu: false,
+              },
+            ],
           },
-        ]
-      }
+        ];
+      },
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -145,11 +149,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     ],
     links: isDev
       ? [
-        <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-          <LinkOutlined />
-          <span>OpenAPI 文档</span>
-        </Link>,
-      ]
+          <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+            <LinkOutlined />
+            <span>OpenAPI 文档</span>
+          </Link>,
+        ]
       : [],
     menuHeaderRender: undefined,
     // 自定义 403 页面
@@ -157,9 +161,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children, props) => {
       // if (initialState?.loading) return <PageLoading />;
-      const path = props.location?.pathname ?? "/"
-      const hideDrawer = path.includes('/login') || path.includes('/welcome') || path === "/"
-      console.log(`showDrawer:${!hideDrawer} path:${path}`)
+      const path = props.location?.pathname ?? '/';
+      const hideDrawer = path.includes('/login') || path.includes('/welcome') || path === '/';
+      console.log(`showDrawer:${!hideDrawer} path:${path}`);
       return (
         <>
           {children}
@@ -190,5 +194,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
  */
 export const request = {
   ...errorConfig,
-  adapter: axiosTauriApiAdapter
+  adapter: axiosTauriApiAdapter,
 };
