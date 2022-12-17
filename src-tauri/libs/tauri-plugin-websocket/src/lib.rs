@@ -91,12 +91,12 @@ fn connect<R: Runtime>(
     let id = rand::random();
     let mut request = url.into_client_request()?;
     match headers {
-        Some(additionHeaders) => {
-            for (key,value) in additionHeaders {
-                let headerKey = HeaderName::from_bytes(key.as_bytes()).unwrap();
-                let headerValue = HeaderValue::from_str(&value).unwrap();
+        Some(headers_map) => {
+            for (key,value) in headers_map {
+                let header_name = HeaderName::from_bytes(key.as_bytes()).unwrap();
+                let header_value = HeaderValue::from_str(&value).unwrap();
 
-                request.headers_mut().insert(headerKey, headerValue);
+                request.headers_mut().insert(header_name, header_value);
             }
         },
         None => {},
