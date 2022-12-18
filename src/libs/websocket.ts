@@ -33,7 +33,7 @@ export default class WebSocket {
   ): Promise<WebSocket> {
     const listeners: ((arg: Message) => void)[] = [];
     const handler = (message: Message) => {
-      console.log('websocket receive msg:', message);
+      // console.log('websocket receive msg:', message);
       listeners.forEach((l) => l(message));
     };
 
@@ -62,7 +62,7 @@ export default class WebSocket {
         'invalid `message` type, expected a `{ type: string, data: any }` object, a string or a numeric array',
       );
     }
-    console.log('websocket send msg:', m);
+    // console.log('websocket send msg:', m);
     return invoke('plugin:websocket|send', {
       id: this.id,
       message: m,

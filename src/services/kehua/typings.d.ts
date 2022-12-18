@@ -37,6 +37,19 @@ declare namespace API {
     trustedDomains?: string[];
   };
 
+  type Friend = {
+    buildFriendTime?: number[];
+    userId?: string;
+    nickname?: string;
+    avatarName?: string;
+    status?: string;
+    buildFriendTimeStamp?: number;
+  };
+
+  type FriendsRsp = {
+    data?: Friend[];
+  };
+
   type GeeTestRegisterResult = {
     status?: number;
     data?: { success?: number; gt?: string; challenge?: string; new_captcha?: boolean };

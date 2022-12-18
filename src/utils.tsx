@@ -14,3 +14,9 @@ export const getCommonAdditionHeaders = () => {
     Authorization: localStorage.getItem('Authorization') ?? '',
   };
 };
+
+export const logFactory = (TAG: string) => {
+  return (content: string) => {
+    console.log(TAG,content)
+  }
+}

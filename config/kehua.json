@@ -294,8 +294,30 @@
           "im"
         ]
       }
+    },
+    "/friends/list": {
+      "summary": "好友列表",
+      "get": {
+        "summary": "好友列表",
+        "description": "",
+        "operationId": "",
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FriendsRsp"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
     }
-
   },
   "components": {
     "schemas": {
@@ -611,6 +633,45 @@
           "mutePenalizeEndTimestamp": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "Friend": {
+        "type": "object",
+        "properties": {
+          "buildFriendTime": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "userId": {
+            "type": "string"
+          },
+          "nickname": {
+            "type": "string"
+          },
+          "avatarName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "buildFriendTimeStamp": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "FriendsRsp": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Friend"
+            }
           }
         }
       }

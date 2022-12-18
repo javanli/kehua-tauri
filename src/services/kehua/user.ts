@@ -9,3 +9,11 @@ export async function getAccountData(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+
+/** 好友列表 GET /friends/list */
+export async function getFriendsList(options?: { [key: string]: any }) {
+  return request<API.FriendsRsp>(`https://www.tideswing.fun/v1/api/friends/list`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}

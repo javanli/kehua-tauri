@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
-import { uniqueId } from 'lodash';
 import WebSocket from '@/libs/websocket';
 import { useModel } from '@umijs/max';
-import { getCommonAdditionHeaders } from '@/utils';
+import { getCommonAdditionHeaders, logFactory } from '@/utils';
+import { nanoid } from 'nanoid';
 
 export enum TSMsgType {
   EnterConversationReq = 106,
   EnterConversationRsp = 104,
-}
 
+  SendMsgReq = 105,
+  SendMsgRsp = 26,
+}
+const allValidMsgTypes = Object.values(TSMsgType).filter((item) => !Number.isNaN(Number(item)))
+
+
+const log = logFactory("TSSocket");
 interface TSSocketMsgBaseModel {
   msgType?: number;
   id?: string;
@@ -17,6 +23,8 @@ interface TSSocketMsgBaseModel {
 }
 interface TSSocketMsgSendModel extends TSSocketMsgBaseModel {
   sendCount?: number;
+  taskName?: string;
+  commentTag?: string;
 }
 interface TSSocketMsgReceiveModel extends TSSocketMsgBaseModel {
   status: number;
@@ -39,8 +47,11 @@ export default () => {
 
   const sendMessage = useCallback(
     (msg: TSSocketMsgSendModel) => {
-      const uuid = uniqueId();
+      const uuid = nanoid();
       msg.id = uuid;
+      msg.timestamp = new Date().getTime()
+
+      log(`send msg: ${JSON.stringify(msg)}`)
       TSSocket?.send(JSON.stringify(msg));
       return new Promise<TSSocketMsgReceiveModel>((resolve) => {
         sendMsgCallbacks.set(uuid, (receiveMsg: TSSocketMsgReceiveModel) => {
@@ -52,18 +63,18 @@ export default () => {
   );
   useEffect(() => {
     const initWS = async () => {
-      console.log('register WS Socket');
+      log('register WS Socket');
       const ws = await WebSocket.connect(
         'wss://im2.tideswing.fun/v1/websocket',
         {},
         getCommonAdditionHeaders(),
       );
       ws.addListener((msg) => {
-        console.log('Received Message: ' + msg);
+        log(`Received Message: ${JSON.stringify(msg)}`);
         switch (msg.type) {
           case 'Close':
             {
-              console.log('WS closed');
+              log('WS closed');
               setTSSocket(undefined);
             }
             break;
@@ -79,9 +90,13 @@ export default () => {
               for (const listener of listeners.values()) {
                 listener(receiveMsg);
               }
+              if (receiveMsg.msgType !== undefined && allValidMsgTypes.indexOf(receiveMsg.msgType) === -1) {
+                console.error(`unknown message!`)
+              }
             }
             break;
           default:
+            console.error(`unknown message`)
             break;
         }
       });
