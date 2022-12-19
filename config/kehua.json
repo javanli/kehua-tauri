@@ -33,6 +33,10 @@
     {
       "name": "im",
       "description": "聊天"
+    },
+    {
+      "name": "publish",
+      "description": "发布"
     }
   ],
   "paths": {
@@ -54,9 +58,7 @@
             }
           }
         },
-        "tags": [
-          "global"
-        ]
+        "tags": ["global"]
       }
     },
     "/maker/app/version/latest": {
@@ -77,9 +79,7 @@
             }
           }
         },
-        "tags": [
-          "global"
-        ]
+        "tags": ["global"]
       }
     },
     "/geetest/register": {
@@ -121,9 +121,7 @@
             }
           }
         },
-        "tags": [
-          "geetest"
-        ]
+        "tags": ["geetest"]
       }
     },
     "/account/sms": {
@@ -211,9 +209,7 @@
             }
           }
         },
-        "tags": [
-          "login"
-        ]
+        "tags": ["login"]
       }
     },
     "/account/login": {
@@ -244,9 +240,7 @@
             }
           }
         },
-        "tags": [
-          "login"
-        ]
+        "tags": ["login"]
       }
     },
     "/account/data": {
@@ -267,9 +261,7 @@
             }
           }
         },
-        "tags": [
-          "user"
-        ]
+        "tags": ["user"]
       }
     },
     "/friends/token": {
@@ -290,9 +282,7 @@
             }
           }
         },
-        "tags": [
-          "im"
-        ]
+        "tags": ["im"]
       }
     },
     "/friends/list": {
@@ -313,9 +303,67 @@
             }
           }
         },
-        "tags": [
-          "user"
-        ]
+        "tags": ["user"]
+      }
+    },
+    "/upload/auth": {
+      "summary": "上传鉴权",
+      "get": {
+        "summary": "上传鉴权",
+        "description": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "authKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "md5Content",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "saveKey",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uploadType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Default error sample response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "signature": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["publish"]
       }
     }
   },

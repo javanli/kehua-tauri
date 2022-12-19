@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import WebSocket from '@/libs/websocket';
 import { useModel } from '@umijs/max';
 import { getCommonAdditionHeaders, logFactory } from '@/utils';
-import { nanoid } from 'nanoid';
 
 export enum TSMsgType {
   EnterConversationReq = 106,
@@ -11,10 +10,9 @@ export enum TSMsgType {
   SendMsgReq = 105,
   SendMsgRsp = 26,
 }
-const allValidMsgTypes = Object.values(TSMsgType).filter((item) => !Number.isNaN(Number(item)))
+const allValidMsgTypes = Object.values(TSMsgType).filter((item) => !Number.isNaN(Number(item)));
 
-
-const log = logFactory("TSSocket");
+const log = logFactory('TSSocket');
 interface TSSocketMsgBaseModel {
   msgType?: number;
   id?: string;
@@ -47,11 +45,11 @@ export default () => {
 
   const sendMessage = useCallback(
     (msg: TSSocketMsgSendModel) => {
-      const uuid = nanoid();
+      const uuid = new Crypto().randomUUID();
       msg.id = uuid;
-      msg.timestamp = new Date().getTime()
+      msg.timestamp = new Date().getTime();
 
-      log(`send msg: ${JSON.stringify(msg)}`)
+      log(`send msg: ${JSON.stringify(msg)}`);
       TSSocket?.send(JSON.stringify(msg));
       return new Promise<TSSocketMsgReceiveModel>((resolve) => {
         sendMsgCallbacks.set(uuid, (receiveMsg: TSSocketMsgReceiveModel) => {
@@ -90,13 +88,16 @@ export default () => {
               for (const listener of listeners.values()) {
                 listener(receiveMsg);
               }
-              if (receiveMsg.msgType !== undefined && allValidMsgTypes.indexOf(receiveMsg.msgType) === -1) {
-                console.error(`unknown message!`)
+              if (
+                receiveMsg.msgType !== undefined &&
+                allValidMsgTypes.indexOf(receiveMsg.msgType) === -1
+              ) {
+                console.error(`unknown message!`);
               }
             }
             break;
           default:
-            console.error(`unknown message`)
+            console.error(`unknown message`);
             break;
         }
       });

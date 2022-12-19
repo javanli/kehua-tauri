@@ -40,7 +40,14 @@ export default [
   },
   {
     path: '/',
-    redirect: '/welcome',
+    layout: false,
+    name: 'welcome',
+    component: './Welcome',
+  },
+  {
+    path: '/publish',
+    name: 'publish',
+    component: './Publish',
   },
   {
     path: '*',

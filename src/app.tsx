@@ -25,7 +25,7 @@ interface InitialUserState {
   commentsMap?: Map<string, API.CommentContent[]>;
   conversations?: API.Conversation[];
   activities?: API.Activity[];
-  friendList?: API.Friend[]
+  friendList?: API.Friend[];
 }
 interface InitialState extends InitialUserState {
   settings?: Partial<LayoutSettings>;
@@ -65,7 +65,7 @@ export async function getInitialState(): Promise<InitialState> {
         activities,
         userMap,
         commentsMap,
-        friendList: friendList.data
+        friendList: friendList.data,
       };
     } catch (error) {
       localStorage.removeItem('Authorization');
@@ -94,11 +94,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       locale: false,
       params: {
         conversations: initialState?.conversations,
-        friendList: initialState?.friendList
+        friendList: initialState?.friendList,
       },
       request: async () => {
         const { commentsMap, conversations, currentUser, userMap, friendList } = initialState ?? {};
         return [
+          {
+            name: '发布',
+            path: `/publish`,
+          },
+          {
+            name: '我的',
+            path: `/home`,
+          },
           {
             name: '评论对话',
             children: [...(conversations ?? [])].reverse().map((conversation: API.Conversation) => {
@@ -119,8 +127,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
               return {
                 name: friend?.nickname ?? '',
                 path: `/friend/${friend.userId}`,
-              }
+              };
             }),
+          },
+          {
+            name: '关于',
+            path: `/welcome`,
           },
         ];
       },

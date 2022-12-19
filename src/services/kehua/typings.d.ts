@@ -74,6 +74,13 @@ declare namespace API {
     captchaType: number;
   };
 
+  type getUploadAuthParams = {
+    authKey: string;
+    md5Content: string;
+    saveKey: string;
+    uploadType: string;
+  };
+
   type LoginRequest = {
     mobile?: string;
     deviceId?: string;
