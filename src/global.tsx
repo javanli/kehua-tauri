@@ -90,6 +90,9 @@ if (pwa) {
   clearCache();
 }
 
-localStorage.setItem("Authorization","Bearer iDzZiwKdaKyHwOzj3T5DEIUSyU9XoNryCdybS2wutia4PbxRh9Gv6YqHGhJr0gSePE1W+Ek3OmsBbfxf2+7EzbWzfbfN216w2V+oZwIAZ3vrrzasHwWBRWyPiDZaPx0DR+1bRPCjnEkBt1XzJkiQDAwacj7SheJkYB9XNv6c5PCQClMXxgEyYC3ohoY3O4G/EG3dD259DlQQ9Tgtji5uItlE3CtbCUTxtI7VjMy9PQcH3Bzt2c17e+NM31Bgdja8bDIWsChxC6sHzQCyL7cOwOfvDEu7b65FGHqvtWWbatnfaYVXN7ZpfDRBhhMU1pbOb2+SRMyknXSUfKtxfBthVg==")
+localStorage.setItem(
+  'Authorization',
+  'Bearer pwL+ZnK68lgeF2X7ptSOraGS4ZS6A46harhs55sPYc9SVkJD5Nt8E72z5oA3URCdh5Xru6QA7lnuHbSo4CAMXXr9EX5Cj3JQXicjhL/abIGwp/Qc5JDBex5RIHYlzuhEBVBRoUeTY+VDfOl2LqIYoyCTLoEqrfrCr27je0ysxORtewT4CGbzV7O4GF4Y6CJ/ycfuzNYZIgeyksn2hF79FTwW+wKFrcPK9mxU088+Xlt/mCBiNDQNEWYz4FnOlpoLFlRcANXJNHnUPBz7p9xEWreMm+LHO7DZO/0UuGlc/QhLJpnXrQ/o2V70r8q8WCnBX2VbnRbn2W+AsUPBGoiZWQ==',
+);
 // localStorage.setItem("Authorization","")
 // console.log('global')

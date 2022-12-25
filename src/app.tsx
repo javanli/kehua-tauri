@@ -6,7 +6,7 @@ import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import axiosTauriApiAdapter from 'axios-tauri-api-adapter';
+import axiosTauriApiAdapter from '@/libs/axios-tauri-api-adapter';
 import { getAppConfig, getMakerAppVersionLatest } from './services/kehua/global';
 import { getAccountData, getFriendsList } from './services/kehua/user';
 import { getConversations } from './services/kehuaV2/comment';

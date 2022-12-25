@@ -61,15 +61,16 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      // 拦截请求配置，进行个性化处理。
-      const modifiedConfig = {
-        ...config,
-        headers: {
-          ...config.headers,
-          ...getCommonAdditionHeaders(),
-        },
-      };
-      return modifiedConfig;
+      if (config.url?.indexOf('www.tideswing.fun') != -1) {
+        return {
+          ...config,
+          headers: {
+            ...config.headers,
+            ...getCommonAdditionHeaders(),
+          },
+        };
+      }
+      return config;
     },
   ],
 
@@ -82,7 +83,7 @@ export const errorConfig: RequestConfig = {
       if (data?.success === false) {
         message.error('请求失败！');
       }
-      response.data = data?.result ?? {};
+      response.data = data?.result ?? data;
       return response;
     },
   ],

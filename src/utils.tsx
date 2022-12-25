@@ -16,7 +16,7 @@ export const getCommonAdditionHeaders = () => {
 };
 
 export const logFactory = (TAG: string) => {
-  return (content: string) => {
-    console.log(TAG,content)
-  }
-}
+  return (content: any) => {
+    console.log(TAG, content);
+  };
+};
