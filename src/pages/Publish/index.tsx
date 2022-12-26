@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-components';
-import React, { useState } from 'react';
+import React, { Dispatch, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Modal, Upload } from 'antd';
+import { Button, message, Modal, Upload } from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import TextArea from 'antd/lib/input/TextArea';
@@ -11,6 +11,7 @@ import { logFactory } from '@/utils';
 import md5 from 'md5';
 import type { UploadRequestOption } from 'rc-upload/es/interface';
 import { Body, getClient } from '@tauri-apps/api/http';
+import { postActivities } from '@/services/kehuaV2/activities';
 // const md5 = (input: string) => input
 const log = logFactory('Publish');
 
@@ -29,10 +30,11 @@ const getArrayBuffer = (file: File): Promise<ArrayBuffer> =>
     reader.onerror = (error) => reject(error);
   });
 const customAsyncUpload = async (option: UploadRequestOption) => {
-  const { Authorization, FileName, contentMd5 } = option.data as {
+  const { Authorization, FileName, contentMd5, contentType } = option.data as {
     Authorization: string;
     FileName: string;
     contentMd5: string;
+    contentType: string;
   };
   try {
     const client = await getClient({
@@ -41,13 +43,14 @@ const customAsyncUpload = async (option: UploadRequestOption) => {
     const binary = await getArrayBuffer(option.file as File);
     const body = Body.bytes(new Uint8Array(binary));
     const result = await client.put(
-      `http://tideswing-storehouse.cn-bj.ufileos.com${FileName}`,
+      `http://tideswing-storehouse.cn-bj.ufileos.com/images%2F${FileName}`,
       body,
       {
         headers: {
           Authorization,
           'Content-MD5': contentMd5,
           UserAgent: 'UFile iOS/3.0.5',
+          'Content-Type': contentType,
         },
       },
     );
@@ -64,11 +67,15 @@ const customAsyncUpload = async (option: UploadRequestOption) => {
 const customUpload = (option: UploadRequestOption) => {
   customAsyncUpload(option);
 };
-const UploadArea: React.FC = () => {
+
+interface UploadAreaProperties {
+  fileList: UploadFile[];
+  setFileList: Dispatch<React.SetStateAction<UploadFile<any>[]>>;
+}
+const UploadArea: React.FC<UploadAreaProperties> = ({ fileList, setFileList }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [previewTitle, setPreviewTitle] = useState('');
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const initialState = useModel('@@initialState', (data) => {
     return {
       currentUser: data.initialState?.currentUser,
@@ -114,7 +121,9 @@ const UploadArea: React.FC = () => {
           });
           const binary = await getArrayBuffer(originFileObj);
           const md5Content = md5(new Uint8Array(binary));
-          const saveKey = `/images/${md5Content}${suffix}`;
+          const fileName = md5Content;
+          const saveKey = `/images/${fileName}${suffix}`;
+          file.url = saveKey;
           const uid = currentUser?.userId ?? '';
           const authKey = md5(`${uid}${saveKey}`);
           log(
@@ -135,8 +144,9 @@ const UploadArea: React.FC = () => {
 
           return {
             Authorization: signature,
-            FileName: `/images/${md5Content}${suffix}`,
+            FileName: `${fileName}${suffix}`,
             contentMd5: md5Content,
+            contentType: file.type ?? 'image/jpeg',
           };
         }}
       >
@@ -151,6 +161,8 @@ const UploadArea: React.FC = () => {
 
 const Welcome: React.FC = () => {
   const [textContent, setTextContent] = useState('');
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
   return (
     <PageContainer>
       <TextArea
@@ -160,7 +172,36 @@ const Welcome: React.FC = () => {
           setTextContent(e.target.value);
         }}
       />
-      <UploadArea />
+      <UploadArea fileList={fileList} setFileList={setFileList} />
+      <Button
+        style={{ width: '200px' }}
+        type="primary"
+        onClick={() => {
+          if (textContent.length === 0) {
+            message.error('请输入内容');
+            return;
+          }
+          const hasUploading = fileList.filter((file) => file.status === 'uploading').length > 0;
+          if (hasUploading) {
+            message.info('上传中，请稍候再试');
+            return;
+          }
+          const successList = fileList
+            .filter((file) => file.status === 'success')
+            .map((file) => file.url ?? '');
+          const content = textContent;
+          postActivities({
+            activitiesText: content ?? '',
+            activitiesState: '0',
+            activitiesImageInfo: successList,
+            activitiesType: successList.length > 0 ? '3' : '1',
+          }).then(() => {
+            setTextContent('');
+          });
+        }}
+      >
+        发送
+      </Button>
     </PageContainer>
   );
 };

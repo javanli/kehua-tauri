@@ -9,7 +9,7 @@ import { errorConfig } from './requestErrorConfig';
 import axiosTauriApiAdapter from '@/libs/axios-tauri-api-adapter';
 import { getAppConfig, getMakerAppVersionLatest } from './services/kehua/global';
 import { getAccountData, getFriendsList } from './services/kehua/user';
-import { getConversations } from './services/kehuaV2/comment';
+import { getImMessageCommentConversations } from './services/kehuaV2/comment';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -46,7 +46,7 @@ export async function getInitialState(): Promise<InitialState> {
       const appConfigPromise = getAppConfig();
       const appVersionStatePromise = getMakerAppVersionLatest();
       const friendListPromist = getFriendsList();
-      const conversationPromise = getConversations();
+      const conversationPromise = getImMessageCommentConversations();
 
       const currentUser = await currentUserPromise;
       const appConfig = await appConfigPromise;

@@ -76,7 +76,7 @@ declare namespace API {
     comments?: Record<string, any>;
   };
 
-  type getTimelineParams = {
+  type getImMessageCommentTimelineParams = {
     /** timeStamp */
     timeStamp: number;
   };

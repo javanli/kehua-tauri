@@ -92,7 +92,7 @@ if (pwa) {
 
 localStorage.setItem(
   'Authorization',
-  'Bearer pwL+ZnK68lgeF2X7ptSOraGS4ZS6A46harhs55sPYc9SVkJD5Nt8E72z5oA3URCdh5Xru6QA7lnuHbSo4CAMXXr9EX5Cj3JQXicjhL/abIGwp/Qc5JDBex5RIHYlzuhEBVBRoUeTY+VDfOl2LqIYoyCTLoEqrfrCr27je0ysxORtewT4CGbzV7O4GF4Y6CJ/ycfuzNYZIgeyksn2hF79FTwW+wKFrcPK9mxU088+Xlt/mCBiNDQNEWYz4FnOlpoLFlRcANXJNHnUPBz7p9xEWreMm+LHO7DZO/0UuGlc/QhLJpnXrQ/o2V70r8q8WCnBX2VbnRbn2W+AsUPBGoiZWQ==',
+  'Bearer PFndIBpSCad18hCdQLMTuJ5yf8OudloGPyLKgkIkwdQFPgwHUvN0LSUaUhBzH8KV3hE+DOe1dkDPIZPS5xMORPIOfBxnYtyCsxn/B8jCPN9vVQDGB0iEQJuKhHdX9Tsiiz5h4XRmZT7e6b9IJJ+R59zN8jG6ocVscxBQ1WtbUX8fZT8QMADG7phicYpqxEjOawCw6GRx48BiMB9ra003lhExvJnRH3VIJKEGBmCa4mVdqCErvyaERPeHuuYIBWlycQ8c03J9AnTMmX44rXK7VqKqqtQacPi77KlzelltGkDAAm4jY699ZiRXg0AM5dNLACUGN1mxUHeDJGBj0Xb4aA==',
 );
 // localStorage.setItem("Authorization","")
 // console.log('global')

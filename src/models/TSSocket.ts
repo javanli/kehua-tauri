@@ -45,7 +45,7 @@ export default () => {
 
   const sendMessage = useCallback(
     (msg: TSSocketMsgSendModel) => {
-      const uuid = new Crypto().randomUUID();
+      const uuid = crypto.randomUUID();
       msg.id = uuid;
       msg.timestamp = new Date().getTime();
 
