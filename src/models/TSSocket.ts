@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import WebSocket from '@/libs/websocket';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import WebSocket, { Message } from '@/libs/websocket';
 import { useModel } from '@umijs/max';
 import { getCommonAdditionHeaders, logFactory } from '@/utils';
 
@@ -9,6 +9,10 @@ export enum TSMsgType {
 
   SendMsgReq = 105,
   SendMsgRsp = 26,
+
+  ReceiveMsgPush = 23,
+  OnReceiveMsgReq = 103,
+  OnReceiveMsgRsp = 101,
 }
 const allValidMsgTypes = Object.values(TSMsgType).filter((item) => !Number.isNaN(Number(item)));
 
@@ -32,16 +36,39 @@ interface TSSocketListener {
 }
 
 export default () => {
-  const { initialState } = useModel('@@initialState');
+  const { initialState, setInitialState } = useModel('@@initialState');
   const [TSSocket, setTSSocket] = useState<WebSocket | undefined>(undefined);
-  const [listeners] = useState<Map<string, TSSocketListener>>(new Map());
-  const addListener = useCallback(
-    (bussinessID: string, listener: TSSocketListener) => {
-      listeners.set(bussinessID, listener);
-    },
-    [listeners],
-  );
   const [sendMsgCallbacks] = useState<Map<string, TSSocketListener>>(new Map());
+  const [commonHandler] = useState<{ handler?: TSSocketListener }>({});
+
+  useMemo(() => {
+    commonHandler.handler = (receiveMsg: TSSocketMsgReceiveModel) => {
+      const msgID = receiveMsg.id ?? '';
+      const callback: TSSocketListener | undefined = sendMsgCallbacks.get(msgID);
+      // callback msg
+      if (callback !== undefined) {
+        callback(receiveMsg);
+        sendMsgCallbacks.delete(msgID);
+      }
+      // handle push
+      if (receiveMsg.msgType === TSMsgType.ReceiveMsgPush) {
+        const comment = receiveMsg.content as API.CommentContent;
+        const commentsMap = new Map(initialState?.commentsMap);
+        const list = commentsMap.get(comment.commentTag ?? '') ?? [];
+        list.push(comment);
+        commentsMap.set(comment.commentTag ?? '', list);
+        setInitialState({
+          ...initialState,
+          commentsMap,
+        });
+        log(`receive msg: ${comment.commentContent}`);
+      }
+      // log message
+      if (receiveMsg.msgType !== undefined && allValidMsgTypes.indexOf(receiveMsg.msgType) === -1) {
+        console.error(`unknown message!`);
+      }
+    };
+  }, [commonHandler, initialState, sendMsgCallbacks, setInitialState]);
 
   const sendMessage = useCallback(
     (msg: TSSocketMsgSendModel) => {
@@ -67,7 +94,7 @@ export default () => {
         {},
         getCommonAdditionHeaders(),
       );
-      ws.addListener((msg) => {
+      ws.addListener((msg: Message) => {
         log(`Received Message: ${JSON.stringify(msg)}`);
         switch (msg.type) {
           case 'Close':
@@ -79,25 +106,12 @@ export default () => {
           case 'Text':
             {
               const receiveMsg: TSSocketMsgReceiveModel = JSON.parse(msg.data) ?? {};
-              const msgID = receiveMsg.id ?? '';
-              const callback: TSSocketListener | undefined = sendMsgCallbacks.get(msgID);
-              if (callback !== undefined) {
-                callback(receiveMsg);
-                sendMsgCallbacks.delete(msgID);
-              }
-              for (const listener of listeners.values()) {
-                listener(receiveMsg);
-              }
-              if (
-                receiveMsg.msgType !== undefined &&
-                allValidMsgTypes.indexOf(receiveMsg.msgType) === -1
-              ) {
-                console.error(`unknown message!`);
+              if (commonHandler.handler !== undefined) {
+                commonHandler.handler(receiveMsg);
               }
             }
             break;
           default:
-            console.error(`unknown message`);
             break;
         }
       });
@@ -111,10 +125,9 @@ export default () => {
       TSSocket?.disconnect();
       setTSSocket(undefined);
     }
-  }, [TSSocket, initialState?.currentUser, listeners, sendMsgCallbacks]);
+  }, [TSSocket, commonHandler, initialState?.currentUser, sendMsgCallbacks]);
 
   return {
     sendMessage,
-    addListener,
   };
 };

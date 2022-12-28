@@ -1,7 +1,7 @@
 import { PageContainer } from '@ant-design/pro-components';
 import React, { Dispatch, useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Modal, Upload } from 'antd';
+import { Button, message, Modal, Row, Switch, Upload } from 'antd';
 import type { RcFile, UploadProps } from 'antd/es/upload';
 import type { UploadFile } from 'antd/es/upload/interface';
 import TextArea from 'antd/lib/input/TextArea';
@@ -29,6 +29,29 @@ const getArrayBuffer = (file: File): Promise<ArrayBuffer> =>
     reader.onload = () => resolve(reader.result as ArrayBuffer);
     reader.onerror = (error) => reject(error);
   });
+const imageSize = (url: string): Promise<{ width: number; height: number }> => {
+  const img = document.createElement('img');
+
+  const promise = new Promise<{ width: number; height: number }>((resolve, reject) => {
+    img.onload = () => {
+      // Natural size is the actual image size regardless of rendering.
+      // The 'normal' `width`/`height` are for the **rendered** size.
+      const width = img.naturalWidth;
+      const height = img.naturalHeight;
+
+      // Resolve promise with the width and height
+      resolve({ width, height });
+    };
+
+    // Reject promise on error
+    img.onerror = reject;
+  });
+
+  // Setting the source makes it start downloading and eventually call `onload`
+  img.src = url;
+
+  return promise;
+};
 const customAsyncUpload = async (option: UploadRequestOption) => {
   const { Authorization, FileName, contentMd5, contentType } = option.data as {
     Authorization: string;
@@ -79,9 +102,10 @@ const UploadArea: React.FC<UploadAreaProperties> = ({ fileList, setFileList }) =
   const initialState = useModel('@@initialState', (data) => {
     return {
       currentUser: data.initialState?.currentUser,
+      appConfig: data.initialState?.appConfig,
     };
   });
-  const { currentUser } = initialState;
+  const { currentUser, appConfig } = initialState;
 
   const handleCancel = () => setPreviewOpen(false);
 
@@ -121,9 +145,9 @@ const UploadArea: React.FC<UploadAreaProperties> = ({ fileList, setFileList }) =
           });
           const binary = await getArrayBuffer(originFileObj);
           const md5Content = md5(new Uint8Array(binary));
-          const fileName = md5Content;
+          const fileName = crypto.randomUUID();
           const saveKey = `/images/${fileName}${suffix}`;
-          file.url = saveKey;
+          file.url = `${appConfig?.uCloudPublicStoreUrl}${saveKey}`;
           const uid = currentUser?.userId ?? '';
           const authKey = md5(`${uid}${saveKey}`);
           log(
@@ -162,7 +186,7 @@ const UploadArea: React.FC<UploadAreaProperties> = ({ fileList, setFileList }) =
 const Welcome: React.FC = () => {
   const [textContent, setTextContent] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-
+  const [isPrivate, setIsPrivate] = useState(false);
   return (
     <PageContainer>
       <TextArea
@@ -172,11 +196,20 @@ const Welcome: React.FC = () => {
           setTextContent(e.target.value);
         }}
       />
+      <br />
+      <br />
       <UploadArea fileList={fileList} setFileList={setFileList} />
+      <br />
+      <br />
+      <Row>
+        <p>仅自己可见 </p>
+        <Switch checked={isPrivate} onChange={(checked) => setIsPrivate(checked)} />
+      </Row>
+      <br />
       <Button
         style={{ width: '200px' }}
         type="primary"
-        onClick={() => {
+        onClick={async () => {
           if (textContent.length === 0) {
             message.error('请输入内容');
             return;
@@ -186,17 +219,34 @@ const Welcome: React.FC = () => {
             message.info('上传中，请稍候再试');
             return;
           }
-          const successList = fileList
-            .filter((file) => file.status === 'success')
-            .map((file) => file.url ?? '');
+          const successList = fileList.filter(
+            (file) => file.status === 'success' || file.status === 'done',
+          );
+          const urlList = successList.map((file) => {
+            const fileName = file.url?.split('/').pop() ?? '';
+            return `/images/${fileName}`;
+          });
+          const imgInfoList = [];
+          for (const img of successList) {
+            const base64 = await getBase64(img.originFileObj as RcFile);
+            const { width, height } = await imageSize(base64);
+            imgInfoList.push({
+              width,
+              height,
+            });
+          }
           const content = textContent;
           postActivities({
             activitiesText: content ?? '',
-            activitiesState: '0',
-            activitiesImageInfo: successList,
-            activitiesType: successList.length > 0 ? '3' : '1',
+            activitiesState: isPrivate ? '1' : '0',
+            activitiesImages: urlList,
+            activitiesImageInfo: imgInfoList,
+            activitiesType: urlList.length > 0 ? '3' : '1',
           }).then(() => {
+            message.success('发布成功');
             setTextContent('');
+            setFileList([]);
+            setIsPrivate(false);
           });
         }}
       >
