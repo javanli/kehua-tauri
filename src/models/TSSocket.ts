@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import WebSocket, { Message } from '@/libs/websocket';
+import type { Message } from '@/libs/websocket';
+import WebSocket from '@/libs/websocket';
 import { useModel } from '@umijs/max';
 import { getCommonAdditionHeaders, logFactory } from '@/utils';
 
@@ -11,8 +12,12 @@ export enum TSMsgType {
   SendMsgRsp = 26,
 
   ReceiveMsgPush = 23,
-  OnReceiveMsgReq = 103,
+  OnReceiveMsgReq = 103, //已读上报
   OnReceiveMsgRsp = 101,
+
+  OnInputPush = 30, //对方正在输入
+
+  OnReceiveMatchPush = 22, //收到共鸣提醒
 }
 const allValidMsgTypes = Object.values(TSMsgType).filter((item) => !Number.isNaN(Number(item)));
 
@@ -20,6 +25,7 @@ const log = logFactory('TSSocket');
 interface TSSocketMsgBaseModel {
   msgType?: number;
   id?: string;
+  sendId?: string;
   timestamp?: number;
   content: any;
 }
@@ -43,12 +49,14 @@ export default () => {
 
   useMemo(() => {
     commonHandler.handler = (receiveMsg: TSSocketMsgReceiveModel) => {
-      const msgID = receiveMsg.id ?? '';
-      const callback: TSSocketListener | undefined = sendMsgCallbacks.get(msgID);
-      // callback msg
-      if (callback !== undefined) {
-        callback(receiveMsg);
-        sendMsgCallbacks.delete(msgID);
+      if (receiveMsg.sendId !== undefined) {
+        const msgID = receiveMsg.sendId ?? '';
+        const callback: TSSocketListener | undefined = sendMsgCallbacks.get(msgID);
+        // callback msg
+        if (callback !== undefined) {
+          callback(receiveMsg);
+          sendMsgCallbacks.delete(msgID);
+        }
       }
       // handle push
       if (receiveMsg.msgType === TSMsgType.ReceiveMsgPush) {
